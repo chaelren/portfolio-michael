@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "ExpType" ADD VALUE 'INTERNSHIP';

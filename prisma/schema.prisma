@@ -1,0 +1,244 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+// ==========================================
+// AUTH & ADMIN
+// ==========================================
+
+model User {
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  hashedPassword String
+  image          String?
+  role           Role      @default(ADMIN)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+enum Role {
+  ADMIN
+}
+
+// ==========================================
+// HERO SECTION (Landing page utama)
+// ==========================================
+
+model HeroSection {
+  id          String   @id @default(uuid())
+  greeting    String   @default("Hello, I'm")       // "Hello, I'm"
+  name        String                                  // "Michael Caren Sihombing"
+  title       String                                  // "Full-Stack Developer"
+  subtitle    String?                                 // tagline singkat
+  description String                                  // deskripsi singkat tentang diri
+  resumeUrl   String?                                 // link download CV
+  avatarUrl   String?                                 // foto profil
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==========================================
+// ABOUT ME
+// ==========================================
+
+model About {
+  id          String   @id @default(uuid())
+  title       String   @default("About Me")
+  description String                                  // paragraf tentang diri kamu
+  imageUrl    String?                                 // foto tambahan
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==========================================
+// SKILLS & TECH STACK
+// ==========================================
+
+model SkillCategory {
+  id        String   @id @default(uuid())
+  name      String                                    // "Frontend", "Backend", "Database", dll
+  order     Int      @default(0)                      // urutan tampil
+  isActive  Boolean  @default(true)
+  skills    Skill[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Skill {
+  id         String        @id @default(uuid())
+  name       String                                   // "React", "TypeScript", "Python"
+  iconUrl    String?                                  // URL icon/logo skill
+  level      SkillLevel    @default(INTERMEDIATE)
+  order      Int           @default(0)
+  isActive   Boolean       @default(true)
+  category   SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@index([categoryId])
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+// ==========================================
+// PROJECTS / PORTFOLIO
+// ==========================================
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String                                  // "GAHC System"
+  slug        String   @unique                        // "gahc-system" (untuk URL)
+  description String                                  // deskripsi singkat
+  content     String?                                 // deskripsi detail (rich text/markdown)
+  imageUrl    String?                                 // screenshot/thumbnail
+  liveUrl     String?                                 // link demo
+  githubUrl   String?                                 // link repository
+  techStack   String[]                                // ["React", "FastAPI", "PostgreSQL"]
+  featured    Boolean  @default(false)                // tampil di homepage
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==========================================
+// EXPERIENCE (Pengalaman Kerja / Organisasi)
+// ==========================================
+
+model Experience {
+  id          String    @id @default(uuid())
+  type        ExpType   @default(WORK)                // WORK, ORGANIZATION, VOLUNTEER
+  position    String                                  // "Full-Stack Developer"
+  company     String                                  // "PT. XYZ" atau nama organisasi
+  companyUrl  String?                                 // link website perusahaan
+  location    String?                                 // "Lampung, Indonesia"
+  description String?                                 // deskripsi tugas/kontribusi
+  startDate   DateTime
+  endDate     DateTime?                               // null = masih berjalan
+  isCurrent   Boolean  @default(false)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum ExpType {
+  WORK
+  ORGANIZATION
+  VOLUNTEER
+  FREELANCE
+  INTERNSHIP
+}
+
+// ==========================================
+// EDUCATION
+// ==========================================
+
+model Education {
+  id          String    @id @default(uuid())
+  institution String                                  // "Institut Teknologi Sumatera"
+  degree      String                                  // "Sarjana Teknik Informatika"
+  field       String                                  // "Teknik Informatika"
+  location    String?                                 // "Lampung, Indonesia"
+  description String?                                 // deskripsi tambahan, prestasi
+  gpa         Float?                                  // IPK
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean  @default(false)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==========================================
+// CERTIFICATIONS & ACHIEVEMENTS
+// ==========================================
+
+model Certification {
+  id             String    @id @default(uuid())
+  name           String                               // "AWS Cloud Practitioner"
+  issuer         String                               // "Amazon Web Services"
+  issuerUrl      String?                              // link issuer
+  credentialId   String?                              // ID sertifikat
+  credentialUrl  String?                              // link verifikasi
+  imageUrl       String?                              // gambar sertifikat
+  issueDate      DateTime
+  expiryDate     DateTime?                            // null = tidak expired
+  order          Int       @default(0)
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// ==========================================
+// CONTACT MESSAGES (dari pengunjung)
+// ==========================================
+
+model ContactMessage {
+  id        String        @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  status    MessageStatus @default(UNREAD)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum MessageStatus {
+  UNREAD
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+// ==========================================
+// SOCIAL LINKS
+// ==========================================
+
+model SocialLink {
+  id        String   @id @default(uuid())
+  platform  String                                    // "GitHub", "LinkedIn", "Instagram"
+  url       String                                    // link profil
+  icon      String?                                   // nama icon (dari lucide)
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// SITE SETTINGS (pengaturan umum website)
+// ==========================================
+
+model SiteSettings {
+  id              String  @id @default(uuid())
+  siteName        String  @default("Michael's Portfolio")
+  siteDescription String?
+  siteUrl         String?
+  logoUrl         String?
+  faviconUrl      String?
+  footerText      String?
+  googleAnalytics String?                             // GA tracking ID
+  metaKeywords    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
