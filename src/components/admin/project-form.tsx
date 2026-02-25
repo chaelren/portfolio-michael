@@ -226,7 +226,7 @@ export default function ProjectForm({ initialData, mode }: ProjectFormProps) {
             </Label>
             <Textarea
               id="content"
-              value={formData.content}
+              value={formData.content || ""}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, content: e.target.value }))
               }
@@ -308,7 +308,7 @@ export default function ProjectForm({ initialData, mode }: ProjectFormProps) {
               </Label>
               <Input
                 id="liveUrl"
-                value={formData.liveUrl}
+                value={formData.liveUrl || ""}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, liveUrl: e.target.value }))
                 }
@@ -322,7 +322,7 @@ export default function ProjectForm({ initialData, mode }: ProjectFormProps) {
               </Label>
               <Input
                 id="githubUrl"
-                value={formData.githubUrl}
+                value={formData.githubUrl || ""}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, githubUrl: e.target.value }))
                 }
