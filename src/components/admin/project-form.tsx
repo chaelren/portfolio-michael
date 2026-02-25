@@ -23,10 +23,10 @@ interface Project {
   title: string;
   slug: string;
   description: string;
-  content?: string;
-  imageUrl?: string;
-  liveUrl?: string;
-  githubUrl?: string;
+  content?: string | null;
+  imageUrl?: string | null;
+  liveUrl?: string | null;
+  githubUrl?: string | null;
   techStack: string[];
   featured: boolean;
   order: number;
