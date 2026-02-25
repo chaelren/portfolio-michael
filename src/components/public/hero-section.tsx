@@ -65,7 +65,7 @@ export default function HeroSection({ hero, socialLinks }: HeroProps) {
         {socialLinks.length > 0 && (
           <div className="flex items-center justify-center gap-3">
             {socialLinks.map((link) => (
-              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all" title={link.platform}>
+              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all" title={link.platform}>
                 {iconMap[link.platform.toLowerCase()] || iconMap[link.icon?.toLowerCase() || ""] || <span className="text-sm">{link.platform}</span>}
               </a>
             ))}
