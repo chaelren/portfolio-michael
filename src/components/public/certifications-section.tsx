@@ -8,12 +8,12 @@ interface CertificationsProps {
     issuerUrl: string | null;
     credentialId: string | null;
     credentialUrl: string | null;
-    issueDate: string;
-    expiryDate: string | null;
+    issueDate: string | Date;
+    expiryDate: string | Date | null;
   }>;
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string | Date) {
   return new Date(dateStr).toLocaleDateString("en-US", { year: "numeric", month: "short" });
 }
 

@@ -12,8 +12,8 @@ interface ExperienceProps {
     companyUrl: string | null;
     location: string | null;
     description: string | null;
-    startDate: string;
-    endDate: string | null;
+    startDate: string | Date;
+    endDate: string | Date | null;
     isCurrent: boolean;
   }>;
   educations: Array<{
@@ -24,13 +24,13 @@ interface ExperienceProps {
     location: string | null;
     description: string | null;
     gpa: number | null;
-    startDate: string;
-    endDate: string | null;
+    startDate: string | Date;
+    endDate: string | Date | null;
     isCurrent: boolean;
   }>;
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string | Date) {
   return new Date(dateStr).toLocaleDateString("en-US", { year: "numeric", month: "short" });
 }
 
