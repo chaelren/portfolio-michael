@@ -1,25 +1,24 @@
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+  const isLoginPage = request.nextUrl.pathname === "/admin/login";
 
-  // Protect all /admin routes except /admin/login
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    if (!req.auth) {
-      const loginUrl = new URL("/admin/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (isAdminRoute && !isLoginPage && !token) {
+    const loginUrl = new URL("/admin/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Redirect logged-in users away from login page
-  if (pathname === "/admin/login" && req.auth) {
-    return NextResponse.redirect(new URL("/admin", req.url));
+  if (isLoginPage && token) {
+    return NextResponse.redirect(new URL("/admin", request.url));
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/admin/:path*"],
